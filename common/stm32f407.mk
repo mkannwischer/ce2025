@@ -36,7 +36,7 @@ LDFLAGS += \
 	-T$(LDSCRIPT) \
 	$(ARCH_FLAGS)
 
-LINKDEPS += obj/hal-stm32f4.c.o $(PROJECT_OBJS)
+LINKDEPS += obj/hal-stm32f4.c.o obj/randombytes.c.o $(PROJECT_OBJS)
 
 all: bin/stm32f407.bin
 
@@ -44,6 +44,11 @@ $(OPENCM3_DIR)/lib/lib$(LIBNAME).a:
 	$(MAKE) -C $(OPENCM3_DIR)
 
 obj/hal-stm32f4.c.o: ../common/hal-stm32f4.c $(OPENCM3_DIR)/lib/lib$(LIBNAME).a
+	@echo "  CC      $@"
+	$(Q)[ -d $(@D) ] || mkdir -p $(@D)
+	$(Q)$(CC) -c -o $@ $(CFLAGS) $<
+
+obj/randombytes.c.o: ../common/randombytes.c
 	@echo "  CC      $@"
 	$(Q)[ -d $(@D) ] || mkdir -p $(@D)
 	$(Q)$(CC) -c -o $@ $(CFLAGS) $<
