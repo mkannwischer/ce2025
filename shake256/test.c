@@ -97,14 +97,30 @@ static void run_speed(void)
   char outstr[128];
   unsigned char speed_digest[1024];
   const unsigned char speed_msg[1024] = {0};
+  uint64_t state[25] = {0};
   uint64_t oldcount, newcount;
+  int i;
   
   hal_send_str("Running speed test...\n");
+  
+  // Benchmark SHAKE256 full function
   oldcount = hal_get_time();
   shake256(speed_digest, 1024, speed_msg, 1024);
   newcount = hal_get_time();
-
-  sprintf(outstr, "\ncycles for %d input bytes and %d output bytes: %llu", 1024, 1024, newcount-oldcount);
+  sprintf(outstr, "cycles for shake256 (%d input bytes, %d output bytes): %llu", 1024, 1024, newcount-oldcount);
+  hal_send_str(outstr);
+  
+  // Initialize state for Keccak permutation benchmark
+  for(i = 0; i < 25; i++) {
+    state[i] = i;
+  }
+  
+  // Benchmark KeccakF1600 permutation
+  hal_send_str("\nBenchmarking KeccakF1600 permutation...\n");
+  oldcount = hal_get_time();
+  KeccakF1600_StatePermute(state);
+  newcount = hal_get_time();
+  sprintf(outstr, "cycles for KeccakF1600 permutation: %llu", newcount-oldcount);
   hal_send_str(outstr);
 }
 #endif
