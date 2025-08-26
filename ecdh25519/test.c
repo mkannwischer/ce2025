@@ -102,6 +102,33 @@ static void run_speed(void)
   hal_send_str(cycles_str);
 }
 
+static void run_stack(void)
+{
+  unsigned char pk[32], ss[32];
+  size_t stack_usage;
+  char outstr[128];
+
+  hal_send_str("\n=== Stack Usage Measurements ===\n");
+
+  // Measure stack usage for crypto_scalarmult_base (public key generation)
+  hal_send_str("Measuring crypto_scalarmult_base stack usage...\n");
+  hal_spraystack();
+  crypto_scalarmult_base(pk, sk0);
+  stack_usage = hal_checkstack();
+  sprintf(outstr, "stack usage for crypto_scalarmult_base: %zu bytes", stack_usage);
+  hal_send_str(outstr);
+
+  // Measure stack usage for crypto_scalarmult (shared secret computation)
+  hal_send_str("Measuring crypto_scalarmult stack usage...\n");
+  hal_spraystack();
+  crypto_scalarmult(ss, sk0, pk);
+  stack_usage = hal_checkstack();
+  sprintf(outstr, "stack usage for crypto_scalarmult: %zu bytes", stack_usage);
+  hal_send_str(outstr);
+
+  hal_send_str("Stack measurements completed!\n");
+}
+
 int main(void)
 {
   hal_setup(CLOCK_BENCHMARK);
@@ -109,6 +136,7 @@ int main(void)
   int test_result = run_tests();
 
   run_speed();
+  run_stack();
 
   if(test_result != 0) {
     hal_send_str("\n*** TEST FAILED ***\n");

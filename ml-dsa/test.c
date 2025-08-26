@@ -276,6 +276,51 @@ static void run_speed(void)
     hal_send_str("Benchmarks completed!\n");
 }
 
+static void run_stack(void)
+{
+    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
+    uint8_t sk[CRYPTO_SECRETKEYBYTES];
+    uint8_t sig[CRYPTO_BYTES];
+    uint8_t message[53];
+    uint8_t rnd[RNDBYTES];
+    uint8_t ctx[1] = {0};
+    size_t siglen;
+    size_t stack_usage;
+    char outstr[128];
+
+    hal_send_str("\n=== Stack Usage Measurements ===\n");
+
+    // Setup test data
+    randombytes(message, 53);
+    randombytes(rnd, RNDBYTES);
+
+    // Measure stack usage for keypair generation
+    hal_send_str("Measuring keypair generation stack usage...\n");
+    hal_spraystack();
+    crypto_sign_keypair(pk, sk);
+    stack_usage = hal_checkstack();
+    sprintf(outstr, "stack usage for keypair generation: %zu bytes", stack_usage);
+    hal_send_str(outstr);
+
+    // Measure stack usage for signature generation
+    hal_send_str("Measuring signature generation stack usage...\n");
+    hal_spraystack();
+    crypto_sign_signature_internal(sig, &siglen, message, 53, ctx, 0, rnd, sk);
+    stack_usage = hal_checkstack();
+    sprintf(outstr, "stack usage for signature generation: %zu bytes", stack_usage);
+    hal_send_str(outstr);
+
+    // Measure stack usage for signature verification
+    hal_send_str("Measuring signature verification stack usage...\n");
+    hal_spraystack();
+    crypto_sign_verify_internal(sig, siglen, message, 53, ctx, 0, pk);
+    stack_usage = hal_checkstack();
+    sprintf(outstr, "stack usage for signature verification: %zu bytes", stack_usage);
+    hal_send_str(outstr);
+
+    hal_send_str("Stack measurements completed!\n");
+}
+
 int main(void)
 {
     hal_setup(CLOCK_BENCHMARK);
@@ -316,6 +361,7 @@ int main(void)
     }
 
     run_speed();
+    run_stack();
 
     hal_send_str("\n*** ALL GOOD ***\n");
     return 0;

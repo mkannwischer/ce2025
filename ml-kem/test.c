@@ -218,6 +218,44 @@ static void run_speed(void)
     hal_send_str(cycles_str);
 }
 
+static void run_stack(void)
+{
+    uint8_t pk[pqcrystals_kyber768_ref_PUBLICKEYBYTES];
+    uint8_t sk[pqcrystals_kyber768_ref_SECRETKEYBYTES];
+    uint8_t ct[pqcrystals_kyber768_ref_CIPHERTEXTBYTES];
+    uint8_t ss[pqcrystals_kyber768_ref_BYTES];
+    size_t stack_usage;
+    char outstr[128];
+
+    hal_send_str("\n=== Stack Usage Measurements ===\n");
+
+    // Measure stack usage for keypair generation
+    hal_send_str("Measuring keypair generation stack usage...\n");
+    hal_spraystack();
+    pqcrystals_kyber768_ref_keypair(pk, sk);
+    stack_usage = hal_checkstack();
+    sprintf(outstr, "stack usage for keypair generation: %zu bytes", stack_usage);
+    hal_send_str(outstr);
+
+    // Measure stack usage for encapsulation
+    hal_send_str("Measuring encapsulation stack usage...\n");
+    hal_spraystack();
+    pqcrystals_kyber768_ref_enc(ct, ss, pk);
+    stack_usage = hal_checkstack();
+    sprintf(outstr, "stack usage for encapsulation: %zu bytes", stack_usage);
+    hal_send_str(outstr);
+
+    // Measure stack usage for decapsulation
+    hal_send_str("Measuring decapsulation stack usage...\n");
+    hal_spraystack();
+    pqcrystals_kyber768_ref_dec(ss, ct, sk);
+    stack_usage = hal_checkstack();
+    sprintf(outstr, "stack usage for decapsulation: %zu bytes", stack_usage);
+    hal_send_str(outstr);
+
+    hal_send_str("Stack measurements completed!\n");
+}
+
 int main(void)
 {
     hal_setup(CLOCK_BENCHMARK);
@@ -248,6 +286,7 @@ int main(void)
     test_result = run_test();
 
     run_speed();
+    run_stack();
 
     if(test_result != 0) {
         hal_send_str("\n*** TEST FAILED ***\n");

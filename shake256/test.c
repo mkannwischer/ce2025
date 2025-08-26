@@ -135,6 +135,32 @@ static void run_speed(void)
   hal_send_str(outstr);
 }
 
+static void run_stack(void)
+{
+  char outstr[128];
+  unsigned char stack_digest[1024];
+  const unsigned char stack_msg[1024] = {0};
+  size_t stack_usage;
+
+  hal_send_str("Running stack measurements...\n");
+
+  // Measure stack usage for SHAKE256
+  hal_spraystack();
+  shake256(stack_digest, 1024, stack_msg, 1024);
+  stack_usage = hal_checkstack();
+  sprintf(outstr, "stack usage for shake256 (%d input bytes, %d output bytes): %zu bytes", 1024, 1024, stack_usage);
+  hal_send_str(outstr);
+
+  // Measure stack usage for KeccakF1600 permutation
+  uint64_t state[25] = {0};
+
+  hal_spraystack();
+  KeccakF1600_StatePermute(state);
+  stack_usage = hal_checkstack();
+  sprintf(outstr, "stack usage for KeccakF1600 permutation: %zu bytes", stack_usage);
+  hal_send_str(outstr);
+}
+
 int main(void)
 {
   hal_setup(CLOCK_FAST);
@@ -142,6 +168,7 @@ int main(void)
 
   int test_result = run_test();
   run_speed();
+  run_stack();
 
   if(test_result != 0) {
     hal_send_str("\n*** TEST FAILED ***\n");
