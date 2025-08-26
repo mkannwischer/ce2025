@@ -69,47 +69,52 @@ static int run_tests(void)
   return 0;
 }
 
-#ifndef MPS2_AN386
 static void run_speed(void)
 {
   unsigned char pk[32], ss[32];
   uint64_t cycles;
-  
-  hal_send_str("\nRunning speed test...\n\n");
-  
+  char cycles_str[64];
+
+  hal_send_str("\n=== Benchmarks ===\n");
+
   cycles = hal_get_time();
   crypto_scalarmult_base(pk, sk0);
   cycles = hal_get_time() - cycles;
   hal_send_str("cycles for crypto_scalarmult_base: ");
-  char cycles_str[32];
+#ifdef MPS2_AN386
+  (void)cycles;
+  sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
+#else
   sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+#endif
   hal_send_str(cycles_str);
-  
+
   cycles = hal_get_time();
   crypto_scalarmult(ss, sk0, pk);
   cycles = hal_get_time() - cycles;
   hal_send_str("cycles for crypto_scalarmult: ");
+#ifdef MPS2_AN386
+  (void)cycles;
+  sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
+#else
   sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+#endif
   hal_send_str(cycles_str);
 }
-#endif
 
 int main(void)
 {
   hal_setup(CLOCK_BENCHMARK);
-  
+
   int test_result = run_tests();
-  
-#ifndef MPS2_AN386
-  // Skip benchmarking on QEMU as it doesn't make sense
+
   run_speed();
-#endif
-  
+
   if(test_result != 0) {
     hal_send_str("\n*** TEST FAILED ***\n");
     return -1;
   }
-  
+
   hal_send_str("\n*** ALL GOOD ***\n");
   return 0;
 }

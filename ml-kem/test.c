@@ -15,15 +15,15 @@ static int test_keygen_vector(void)
     uint8_t pk[pqcrystals_kyber768_ref_PUBLICKEYBYTES];
     uint8_t sk[pqcrystals_kyber768_ref_SECRETKEYBYTES];
     int i;
-    
+
     hal_send_str("\n=== Test 1: Keypair Generation ===\n");
-    
+
     // Generate keypair with test vector coins
     if(pqcrystals_kyber768_ref_keypair_derand(pk, sk, tv_keypair_coins) != 0) {
         hal_send_str("Keypair generation failed!\n");
         return -1;
     }
-    
+
     // Compare public key
     for(i = 0; i < pqcrystals_kyber768_ref_PUBLICKEYBYTES; i++) {
         if(pk[i] != tv_expected_pk[i]) {
@@ -31,7 +31,7 @@ static int test_keygen_vector(void)
             return -1;
         }
     }
-    
+
     // Compare secret key
     for(i = 0; i < pqcrystals_kyber768_ref_SECRETKEYBYTES; i++) {
         if(sk[i] != tv_expected_sk[i]) {
@@ -39,7 +39,7 @@ static int test_keygen_vector(void)
             return -1;
         }
     }
-    
+
     hal_send_str("✓ Keypair generation test vector PASSED\n");
     return 0;
 }
@@ -49,15 +49,15 @@ static int test_encaps_vector(void)
     uint8_t ct[pqcrystals_kyber768_ref_CIPHERTEXTBYTES];
     uint8_t ss[pqcrystals_kyber768_ref_BYTES];
     int i;
-    
+
     hal_send_str("\n=== Test 2: Encapsulation ===\n");
-    
+
     // Perform encapsulation with test vector public key and coins
     if(pqcrystals_kyber768_ref_enc_derand(ct, ss, tv_encaps_pk, tv_encaps_coins) != 0) {
         hal_send_str("Encapsulation failed!\n");
         return -1;
     }
-    
+
     // Compare ciphertext
     for(i = 0; i < pqcrystals_kyber768_ref_CIPHERTEXTBYTES; i++) {
         if(ct[i] != tv_expected_ct[i]) {
@@ -65,7 +65,7 @@ static int test_encaps_vector(void)
             return -1;
         }
     }
-    
+
     // Compare shared secret
     for(i = 0; i < pqcrystals_kyber768_ref_BYTES; i++) {
         if(ss[i] != tv_expected_ss_encaps[i]) {
@@ -73,7 +73,7 @@ static int test_encaps_vector(void)
             return -1;
         }
     }
-    
+
     hal_send_str("✓ Encapsulation test vector PASSED\n");
     return 0;
 }
@@ -82,15 +82,15 @@ static int test_decaps_vector(void)
 {
     uint8_t ss[pqcrystals_kyber768_ref_BYTES];
     int i;
-    
+
     hal_send_str("\n=== Test 3: Decapsulation ===\n");
-    
+
     // Perform decapsulation with test vector secret key and ciphertext
     if(pqcrystals_kyber768_ref_dec(ss, tv_decaps_ct, tv_decaps_sk) != 0) {
         hal_send_str("Decapsulation failed!\n");
         return -1;
     }
-    
+
     // Compare shared secret
     for(i = 0; i < pqcrystals_kyber768_ref_BYTES; i++) {
         if(ss[i] != tv_expected_ss_decaps[i]) {
@@ -98,7 +98,7 @@ static int test_decaps_vector(void)
             return -1;
         }
     }
-    
+
     hal_send_str("✓ Decapsulation test vector PASSED\n");
     return 0;
 }
@@ -153,7 +153,6 @@ static int run_test(void)
     return 0;
 }
 
-#ifndef MPS2_AN386
 static void run_speed(void)
 {
     uint8_t pk[pqcrystals_kyber768_ref_PUBLICKEYBYTES];
@@ -162,7 +161,7 @@ static void run_speed(void)
     uint8_t ss[pqcrystals_kyber768_ref_BYTES];
     poly a;
     uint64_t cycles;
-    char cycles_str[32];
+    char cycles_str[100];
 
     hal_send_str("\n=== Benchmarks ===\n");
 
@@ -171,7 +170,12 @@ static void run_speed(void)
     poly_ntt(&a);
     cycles = hal_get_time() - cycles;
     hal_send_str("cycles for poly_ntt: ");
+#ifdef MPS2_AN386
+    (void)cycles;
+    sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
+#else
     sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+#endif
     hal_send_str(cycles_str);
 
     // Keypair generation benchmark
@@ -179,7 +183,12 @@ static void run_speed(void)
     pqcrystals_kyber768_ref_keypair(pk, sk);
     cycles = hal_get_time() - cycles;
     hal_send_str("cycles for keypair generation: ");
+#ifdef MPS2_AN386
+    (void)cycles;
+    sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
+#else
     sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+#endif
     hal_send_str(cycles_str);
 
     // Encapsulation benchmark
@@ -187,7 +196,12 @@ static void run_speed(void)
     pqcrystals_kyber768_ref_enc(ct, ss, pk);
     cycles = hal_get_time() - cycles;
     hal_send_str("cycles for encapsulation: ");
+#ifdef MPS2_AN386
+    (void)cycles;
+    sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
+#else
     sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+#endif
     hal_send_str(cycles_str);
 
     // Decapsulation benchmark
@@ -195,10 +209,14 @@ static void run_speed(void)
     pqcrystals_kyber768_ref_dec(ss, ct, sk);
     cycles = hal_get_time() - cycles;
     hal_send_str("cycles for decapsulation: ");
+#ifdef MPS2_AN386
+    (void)cycles;
+    sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
+#else
     sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+#endif
     hal_send_str(cycles_str);
 }
-#endif
 
 int main(void)
 {
@@ -210,28 +228,26 @@ int main(void)
         hal_send_str("\n*** TEST FAILED ***\n");
         return -1;
     }
-    
+
     // Second test: verify encapsulation test vectors
     test_result = test_encaps_vector();
     if(test_result != 0) {
         hal_send_str("\n*** TEST FAILED ***\n");
         return -1;
     }
-    
+
     // Third test: verify decapsulation test vectors
     test_result = test_decaps_vector();
     if(test_result != 0) {
         hal_send_str("\n*** TEST FAILED ***\n");
         return -1;
     }
-    
+
     // Fourth test: functional test
     hal_send_str("\n=== Test 4: Functional KEM Test ===\n");
     test_result = run_test();
 
-#ifndef MPS2_AN386
     run_speed();
-#endif
 
     if(test_result != 0) {
         hal_send_str("\n*** TEST FAILED ***\n");

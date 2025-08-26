@@ -91,7 +91,6 @@ static int run_test(void)
   return 0;
 }
 
-#ifndef MPS2_AN386
 static void run_speed(void)
 {
   char outstr[128];
@@ -100,41 +99,49 @@ static void run_speed(void)
   uint64_t state[25] = {0};
   uint64_t oldcount, newcount;
   int i;
-  
+
   hal_send_str("Running speed test...\n");
-  
+
   // Benchmark SHAKE256 full function
   oldcount = hal_get_time();
   shake256(speed_digest, 1024, speed_msg, 1024);
   newcount = hal_get_time();
+
+#ifdef MPS2_AN386
+  (void)oldcount; (void)newcount;
+  sprintf(outstr, "[cycle counts not meaningful in qemu emulation]");
+#else
   sprintf(outstr, "cycles for shake256 (%d input bytes, %d output bytes): %llu", 1024, 1024, newcount-oldcount);
+#endif
   hal_send_str(outstr);
-  
+
   // Initialize state for Keccak permutation benchmark
   for(i = 0; i < 25; i++) {
     state[i] = i;
   }
-  
+
   // Benchmark KeccakF1600 permutation
   hal_send_str("\nBenchmarking KeccakF1600 permutation...\n");
   oldcount = hal_get_time();
   KeccakF1600_StatePermute(state);
   newcount = hal_get_time();
+
+#ifdef MPS2_AN386
+  (void)oldcount; (void)newcount;
+  sprintf(outstr, "[cycle counts not meaningful in qemu emulation]");
+#else
   sprintf(outstr, "cycles for KeccakF1600 permutation: %llu", newcount-oldcount);
+#endif
   hal_send_str(outstr);
 }
-#endif
 
 int main(void)
 {
   hal_setup(CLOCK_FAST);
   hal_send_str("==================");
-  
+
   int test_result = run_test();
-#ifndef MPS2_AN386
-  // benchmarking on qemu does not make sense.
   run_speed();
-#endif
 
   if(test_result != 0) {
     hal_send_str("\n*** TEST FAILED ***\n");
