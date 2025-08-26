@@ -37,7 +37,6 @@ int randombytes(void *output, size_t len)
 }
 
 #else /* NONRANDOM FALLBACK IMPLEMENTATION */
-#pragma message("Using a non-random randombytes")
 
 #include <string.h>
 
