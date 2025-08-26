@@ -72,6 +72,10 @@ obj/%.s.o: %.s
 	$(Q)[ -d $(@D) ] || mkdir -p $(@D)
 	$(Q)$(CC) -c -o $@ $(CFLAGS) $<
 
+size: $(PROJECT_OBJS)
+	@echo "=== Code Size Analysis ==="
+	@arm-none-eabi-size -t $(PROJECT_OBJS)
+
 clean:
 	find . -name \*.o -type f -exec rm -f {} \;
 	find . -name \*.d -type f -exec rm -f {} \;

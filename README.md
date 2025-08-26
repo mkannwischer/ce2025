@@ -62,6 +62,12 @@ make PLATFORM=stm32             # Build
 make flash-stm32 PLATFORM=stm32 # Build and flash to hardware
 ```
 
+**Code Size Analysis**:
+```bash
+cd ml-dsa/                      # or any project directory
+make size PLATFORM=qemu         # Analyze code size (works with any platform)
+```
+
 ### Test All Projects
 ```bash
 ./run-all-tests.sh            # Run tests for all projects
@@ -107,12 +113,13 @@ All programs run comprehensive test suites including:
 - **Correctness Tests**: Validation against NIST test vectors
 - **Functional Tests**: End-to-end algorithm testing  
 - **Performance Benchmarks**: Cycle counting (STM32F407 only)
+- **Code Size Analysis**: Memory usage breakdown by source file
 
 **Test Results**:
 - **Success**: Ends with `*** ALL GOOD ***`
 - **Failure**: Ends with `*** TEST FAILED ***`
 
-**Note**: Performance benchmarks are disabled in QEMU as cycle counts are not meaningful in emulation.
+**Note**: Performance benchmarks show placeholder messages in QEMU as cycle counts are not meaningful in emulation.
 
 ## Hardware Setup
 
