@@ -1,0 +1,28 @@
+# Build artifacts
+obj/
+bin/
+elf/
+*.o
+*.d
+*.a
+*.elf
+*.bin
+*.hex
+
+# Generated linker scripts
+ldscript.ld
+
+# Common build artifacts linked to projects
+shake256/common/
+*/common/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
