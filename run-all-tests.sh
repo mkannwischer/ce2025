@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_DIRS="shake256 ecdh25519 ml-kem"
+TEST_DIRS="shake256 ecdh25519 ml-kem ml-dsa"
 FAILED=0
 
 for dir in $TEST_DIRS; do
