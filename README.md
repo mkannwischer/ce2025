@@ -10,7 +10,7 @@ Projects are organized into two parts:
 
 **Part A: Classical Cryptography**
 - **shake256/**: SHAKE256 extendable output function (XOF)
-- **ecdh25519**: Elliptic Curve Diffie-Hellman key exchange using Curve25519
+- **ecdh25519/**: Elliptic Curve Diffie-Hellman key exchange using Curve25519
 
 **Part B: Post-Quantum Cryptography**
 - **ml-kem/**: ML-KEM (Kyber) lattice-based key encapsulation mechanism
@@ -59,7 +59,7 @@ make run-qemu PLATFORM=qemu   # Build and run
 ```bash
 cd ml-dsa/                      # or any project directory  
 make PLATFORM=stm32             # Build
-make flash-stm32 PLATFORM=stm32 # Flash to hardware
+make flash-stm32 PLATFORM=stm32 # Build and flash to hardware
 ```
 
 ### Test All Projects
@@ -74,9 +74,7 @@ Each project follows a consistent structure:
 project-name/
 ├── Makefile                 # Project-specific build configuration
 ├── test.c                   # Main test program with benchmarks
-├── testvectors.inc          # NIST test vectors (where applicable)
 ├── *.c, *.h                 # Implementation files
-└── README.md                # Project-specific documentation
 ```
 
 ## Adding Your Own Sources
