@@ -22,22 +22,33 @@ LIBDEPS += $(OPENCM3_DIR)/lib/lib$(LIBNAME).a
 LDFLAGS += -L$(OPENCM3_DIR)/lib
 LDFLAGS += \
 	--specs=nosys.specs \
+	-Wl,--wrap=_close \
+	-Wl,--wrap=_isatty \
+	-Wl,--wrap=_kill \
+	-Wl,--wrap=_lseek \
+	-Wl,--wrap=_read \
+	-Wl,--wrap=_write \
+	-Wl,--wrap=_fstat \
+	-Wl,--wrap=_getpid \
 	-nostartfiles \
 	-Wl,--no-warn-rwx-segments \
 	-ffreestanding \
 	-T$(LDSCRIPT) \
 	$(ARCH_FLAGS)
 
-LINKDEPS += obj/../common/hal-stm32f4.c.o $(PROJECT_OBJS)
+LINKDEPS += obj/hal-stm32f4.c.o $(PROJECT_OBJS)
 
 all: bin/stm32f407.bin
 
 $(OPENCM3_DIR)/lib/lib$(LIBNAME).a:
 	$(MAKE) -C $(OPENCM3_DIR)
 
-obj/../common/hal-stm32f4.c.o: $(OPENCM3_DIR)/lib/lib$(LIBNAME).a
+obj/hal-stm32f4.c.o: ../common/hal-stm32f4.c $(OPENCM3_DIR)/lib/lib$(LIBNAME).a
+	@echo "  CC      $@"
+	$(Q)[ -d $(@D) ] || mkdir -p $(@D)
+	$(Q)$(CC) -c -o $@ $(CFLAGS) $<
 
-elf/stm32f407.elf: $(PROJECT_OBJS) obj/../common/hal-stm32f4.c.o $(OPENCM3_DIR)/lib/lib$(LIBNAME).a obj/_ELFNAME_stm32f407.elf.o
+elf/stm32f407.elf: $(PROJECT_OBJS) obj/hal-stm32f4.c.o $(OPENCM3_DIR)/lib/lib$(LIBNAME).a obj/_ELFNAME_stm32f407.elf.o
 
 # Flash target for STM32F407 board using st-flash (requires st-link tools)
 flash-stm32: bin/stm32f407.bin

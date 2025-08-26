@@ -8,6 +8,21 @@
 #define SYSTEM_CLOCK 25000000UL
 #endif
 
+// Platform-specific system functions
+void SystemInit(void);
+
+// ARM Cortex-M interrupt handlers
+void SysTick_Handler(void);
+void NMI_Handler(void);
+void HardFault_Handler(void);
+void MemManage_Handler(void);
+void BusFault_Handler(void);
+void UsageFault_Handler(void);
+void SVC_Handler(void);
+void DebugMon_Handler(void);
+void PendSV_Handler(void);
+void Default_Handler(void);
+
 /* The startup file calls a SystemInit function. */
 void SystemInit(void)
 {
@@ -162,4 +177,64 @@ size_t hal_get_stack_size(void)
   register char* cur_stack;
 	__asm__ volatile ("mov %0, sp" : "=r" (cur_stack));
   return cur_stack - heap_end;
+}
+
+/* System call stubs - suppress warnings from newer ARM toolchains */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
+
+int __wrap__close(int fd) {
+    (void)fd;
+    errno = ENOSYS;
+    return -1;
+}
+
+int __wrap__fstat(int fd, struct stat *buf) {
+    (void)fd;
+    (void)buf;
+    errno = ENOSYS;
+    return -1;
+}
+
+pid_t __wrap__getpid(void) {
+    errno = ENOSYS;
+    return -1;
+}
+
+int __wrap__isatty(int fd) {
+    (void)fd;
+    errno = ENOSYS;
+    return 0;
+}
+
+int __wrap__kill(pid_t pid, int sig) {
+    (void)pid;
+    (void)sig;
+    errno = ENOSYS;
+    return -1;
+}
+
+off_t __wrap__lseek(int fd, off_t offset, int whence) {
+    (void)fd;
+    (void)offset;
+    (void)whence;
+    errno = ENOSYS;
+    return -1;
+}
+
+ssize_t __wrap__read(int fd, void *buf, size_t count) {
+    (void)fd;
+    (void)buf;
+    (void)count;
+    errno = ENOSYS;
+    return -1;
+}
+
+ssize_t __wrap__write(int fd, const void *buf, size_t count) {
+    (void)fd;
+    (void)buf;
+    (void)count;
+    errno = ENOSYS;
+    return -1;
 }

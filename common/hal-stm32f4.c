@@ -8,6 +8,9 @@
 #include <libopencm3/stm32/flash.h>
 #include <libopencm3/cm3/systick.h>
 #include <stdio.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /* 24 MHz */
 const struct rcc_clock_scale benchmarkclock = {
@@ -120,4 +123,61 @@ uint64_t hal_get_time()
       return result;
     }
   }
+}
+
+/* System call stubs - suppress warnings from newer ARM toolchains */
+
+int __wrap__close(int fd) {
+    (void)fd;
+    errno = ENOSYS;
+    return -1;
+}
+
+int __wrap__fstat(int fd, struct stat *buf) {
+    (void)fd;
+    (void)buf;
+    errno = ENOSYS;
+    return -1;
+}
+
+pid_t __wrap__getpid(void) {
+    errno = ENOSYS;
+    return -1;
+}
+
+int __wrap__isatty(int fd) {
+    (void)fd;
+    errno = ENOSYS;
+    return 0;
+}
+
+int __wrap__kill(pid_t pid, int sig) {
+    (void)pid;
+    (void)sig;
+    errno = ENOSYS;
+    return -1;
+}
+
+off_t __wrap__lseek(int fd, off_t offset, int whence) {
+    (void)fd;
+    (void)offset;
+    (void)whence;
+    errno = ENOSYS;
+    return -1;
+}
+
+ssize_t __wrap__read(int fd, void *buf, size_t count) {
+    (void)fd;
+    (void)buf;
+    (void)count;
+    errno = ENOSYS;
+    return -1;
+}
+
+ssize_t __wrap__write(int fd, const void *buf, size_t count) {
+    (void)fd;
+    (void)buf;
+    (void)count;
+    errno = ENOSYS;
+    return -1;
 }
