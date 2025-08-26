@@ -111,9 +111,10 @@ Each build generates platform-specific binaries:
 
 All programs run comprehensive test suites including:
 - **Correctness Tests**: Validation against NIST test vectors
-- **Functional Tests**: End-to-end algorithm testing  
-- **Performance Benchmarks**: Cycle counting (STM32F407 only)
-- **Code Size Analysis**: Memory usage breakdown by source file
+- **Functional Tests**: End-to-end algorithm testing
+- **Performance Benchmarks**: Cycle count measurements for key operations
+- **Stack Usage Analysis**: Memory consumption measurements for each function
+- **Code Size Analysis**: Code (binary) size breakdown by source file
 
 **Test Results**:
 - **Success**: Ends with `*** ALL GOOD ***`
