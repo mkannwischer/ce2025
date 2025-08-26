@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_DIRS="shake256"
+TEST_DIRS="shake256 ecdh25519"
 FAILED=0
 
 for dir in $TEST_DIRS; do

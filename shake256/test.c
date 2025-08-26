@@ -91,6 +91,7 @@ static int run_test(void)
   return 0;
 }
 
+#ifndef MPS2_AN386
 static void run_speed(void)
 {
   char outstr[128];
@@ -106,6 +107,7 @@ static void run_speed(void)
   sprintf(outstr, "\ncycles for %d input bytes and %d output bytes: %llu", 1024, 1024, newcount-oldcount);
   hal_send_str(outstr);
 }
+#endif
 
 int main(void)
 {

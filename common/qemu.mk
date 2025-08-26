@@ -10,9 +10,7 @@ CFLAGS += -O3 \
 	-Wundef -Wshadow \
 	$(ARCH_FLAGS) \
 	-I../common -I../common/mps2 \
-	-fno-common -MD
-
-CPPFLAGS += \
+	-fno-common -MD \
 	-DMPS2_AN386
 
 LDFLAGS += \
