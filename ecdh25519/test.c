@@ -31,8 +31,7 @@ static int run_tests(void)
   unsigned char ss0[GROUP_GE_PACKEDBYTES];
   unsigned char ss1[GROUP_GE_PACKEDBYTES];
 
-  hal_send_str("==================\n");
-  hal_send_str("Running test...\n\n");
+  hal_send_str("\n=== Test 1: ECDH25519 Test Vector ===\n");
 
   crypto_scalarmult_base(pk0, sk0);
   crypto_scalarmult_base(pk1, sk1);
@@ -44,28 +43,28 @@ static int run_tests(void)
   {
     if(ss0[i] != ss1[i])
     {
-      hal_send_str("ERROR: shared secrets don't match\n");
+      hal_send_str("ECDH25519 test vector failed: shared secrets don't match\n");
       return 1;
     }
 
     if(pk0[i] != cmppk0[i])
     {
-      hal_send_str("ERROR: pk0 mismatch\n");
+      hal_send_str("ECDH25519 test vector failed: pk0 mismatch\n");
       return 1;
     }
     if(pk1[i] != cmppk1[i])
     {
-      hal_send_str("ERROR: pk1 mismatch\n");
+      hal_send_str("ECDH25519 test vector failed: pk1 mismatch\n");
       return 1;
     }
     if(ss0[i] != cmpss[i])
     {
-      hal_send_str("ERROR: shared secret mismatch\n");
+      hal_send_str("ECDH25519 test vector failed: shared secret mismatch\n");
       return 1;
     }
   }
 
-  hal_send_str("Test successful!\n");
+  hal_send_str("✓ ECDH25519 test vector PASSED\n");
   return 0;
 }
 
@@ -100,6 +99,8 @@ static void run_speed(void)
   sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
 #endif
   hal_send_str(cycles_str);
+
+  hal_send_str("Benchmarks completed!\n");
 }
 
 static void run_stack(void)
@@ -133,6 +134,7 @@ int main(void)
 {
   hal_setup(CLOCK_BENCHMARK);
 
+  // First test: verify ECDH25519 test vector
   int test_result = run_tests();
 
   run_speed();

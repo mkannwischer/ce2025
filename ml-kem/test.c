@@ -216,6 +216,8 @@ static void run_speed(void)
     sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
 #endif
     hal_send_str(cycles_str);
+
+    hal_send_str("Benchmarks completed!\n");
 }
 
 static void run_stack(void)

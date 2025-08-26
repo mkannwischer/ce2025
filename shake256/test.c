@@ -74,7 +74,7 @@ const unsigned char cmp[OUTLEN] = {
 static int run_test(void)
 {
   unsigned char digest[OUTLEN];
-  hal_send_str("Running test...\n");
+  hal_send_str("\n=== Test 1: SHAKE256 Test Vector ===\n");
   shake256(digest, OUTLEN, msg, INLEN);
 
   int i;
@@ -82,12 +82,12 @@ static int run_test(void)
   {
     if(cmp[i] != digest[i])
     {
-      hal_send_str("Test failed!\n");
+      hal_send_str("SHAKE256 test vector failed!\n");
       return -1;
     }
   }
 
-  hal_send_str("Test successful!\n");
+  hal_send_str("✓ SHAKE256 test vector PASSED\n");
   return 0;
 }
 
@@ -100,18 +100,18 @@ static void run_speed(void)
   uint64_t oldcount, newcount;
   int i;
 
-  hal_send_str("Running speed test...\n");
+  hal_send_str("\n=== Benchmarks ===\n");
 
   // Benchmark SHAKE256 full function
   oldcount = hal_get_time();
   shake256(speed_digest, 1024, speed_msg, 1024);
   newcount = hal_get_time();
-
+  hal_send_str("cycles for SHAKE256: ");
 #ifdef MPS2_AN386
   (void)oldcount; (void)newcount;
-  sprintf(outstr, "[cycle counts not meaningful in qemu emulation]");
+  sprintf(outstr, "[cycle counts not meaningful in qemu emulation]\n");
 #else
-  sprintf(outstr, "cycles for shake256 (%d input bytes, %d output bytes): %llu", 1024, 1024, newcount-oldcount);
+  sprintf(outstr, "%llu\n", newcount-oldcount);
 #endif
   hal_send_str(outstr);
 
@@ -121,18 +121,19 @@ static void run_speed(void)
   }
 
   // Benchmark KeccakF1600 permutation
-  hal_send_str("\nBenchmarking KeccakF1600 permutation...\n");
   oldcount = hal_get_time();
   KeccakF1600_StatePermute(state);
   newcount = hal_get_time();
-
+  hal_send_str("cycles for KeccakF1600: ");
 #ifdef MPS2_AN386
   (void)oldcount; (void)newcount;
-  sprintf(outstr, "[cycle counts not meaningful in qemu emulation]");
+  sprintf(outstr, "[cycle counts not meaningful in qemu emulation]\n");
 #else
-  sprintf(outstr, "cycles for KeccakF1600 permutation: %llu", newcount-oldcount);
+  sprintf(outstr, "%llu\n", newcount-oldcount);
 #endif
   hal_send_str(outstr);
+
+  hal_send_str("Benchmarks completed!\n");
 }
 
 static void run_stack(void)
@@ -142,30 +143,33 @@ static void run_stack(void)
   const unsigned char stack_msg[1024] = {0};
   size_t stack_usage;
 
-  hal_send_str("Running stack measurements...\n");
+  hal_send_str("\n=== Stack Usage Measurements ===\n");
 
   // Measure stack usage for SHAKE256
+  hal_send_str("Measuring SHAKE256 stack usage...\n");
   hal_spraystack();
   shake256(stack_digest, 1024, stack_msg, 1024);
   stack_usage = hal_checkstack();
-  sprintf(outstr, "stack usage for shake256 (%d input bytes, %d output bytes): %zu bytes", 1024, 1024, stack_usage);
+  sprintf(outstr, "stack usage for SHAKE256: %zu bytes", stack_usage);
   hal_send_str(outstr);
 
   // Measure stack usage for KeccakF1600 permutation
   uint64_t state[25] = {0};
-
+  hal_send_str("Measuring KeccakF1600 stack usage...\n");
   hal_spraystack();
   KeccakF1600_StatePermute(state);
   stack_usage = hal_checkstack();
-  sprintf(outstr, "stack usage for KeccakF1600 permutation: %zu bytes", stack_usage);
+  sprintf(outstr, "stack usage for KeccakF1600: %zu bytes", stack_usage);
   hal_send_str(outstr);
+
+  hal_send_str("Stack measurements completed!\n");
 }
 
 int main(void)
 {
   hal_setup(CLOCK_FAST);
-  hal_send_str("==================");
 
+  // First test: verify SHAKE256 test vector
   int test_result = run_test();
   run_speed();
   run_stack();

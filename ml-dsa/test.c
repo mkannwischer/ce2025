@@ -81,14 +81,14 @@ static int test_signature_vector(void)
     return 0;
 }
 
-static int test_verify_positive(void)
+static int test_valid_signature_verification(void)
 {
     uint8_t pre[257]; // Maximum prefix size (0 + ctxlen + ctx)
     size_t ctxlen = sizeof(tv_verify_pos_ctx);
     size_t i;
     int result;
 
-    hal_send_str("\n=== Test 3: Positive Verification ===\n");
+    hal_send_str("\n=== Test 3: Valid Signature Verification ===\n");
 
     // Construct prefix as done in crypto_sign_verify: pre = (0, ctxlen, ctx)
     pre[0] = 0;                    // Always 0 for regular signing
@@ -104,22 +104,22 @@ static int test_verify_positive(void)
                                         tv_verify_pos_pk);
 
     if(result != 0) {
-        hal_send_str("Positive verification failed (unexpected)!\n");
+        hal_send_str("Valid signature verification failed (unexpected)!\n");
         return -1;
     }
 
-    hal_send_str("✓ Positive verification test vector PASSED\n");
+    hal_send_str("✓ Valid signature verification test vector PASSED\n");
     return 0;
 }
 
-static int test_verify_negative(void)
+static int test_invalid_signature_verification(void)
 {
     uint8_t pre[257]; // Maximum prefix size (0 + ctxlen + ctx)
     size_t ctxlen = sizeof(tv_verify_neg_ctx);
     size_t i;
     int result;
 
-    hal_send_str("\n=== Test 4: Negative Verification ===\n");
+    hal_send_str("\n=== Test 4: Invalid Signature Verification ===\n");
 
     // Construct prefix as done in crypto_sign_verify: pre = (0, ctxlen, ctx)
     pre[0] = 0;                    // Always 0 for regular signing
@@ -135,11 +135,11 @@ static int test_verify_negative(void)
                                         tv_verify_neg_pk);
 
     if(result == 0) {
-        hal_send_str("Negative verification passed (unexpected)!\n");
+        hal_send_str("Invalid signature verification passed (unexpected)!\n");
         return -1;
     }
 
-    hal_send_str("✓ Negative verification test vector PASSED (verification failed as expected)\n");
+    hal_send_str("✓ Invalid signature verification test vector PASSED (verification failed as expected)\n");
     return 0;
 }
 
@@ -218,7 +218,6 @@ static void run_speed(void)
     }
 
     // Keypair generation benchmark
-    hal_send_str("Benchmarking keypair generation...\n");
     cycles = hal_get_time();
     crypto_sign_keypair(pk, sk);
     cycles = hal_get_time() - cycles;
@@ -232,7 +231,6 @@ static void run_speed(void)
     hal_send_str(cycles_str);
 
     // Signature generation benchmark (using generated keypair)
-    hal_send_str("Benchmarking signature generation...\n");
     cycles = hal_get_time();
     crypto_sign_signature_internal(sig, &siglen, message, 53, ctx, 0, rnd, sk);
     cycles = hal_get_time() - cycles;
@@ -246,7 +244,6 @@ static void run_speed(void)
     hal_send_str(cycles_str);
 
     // Signature verification benchmark (using valid signature from above)
-    hal_send_str("Benchmarking signature verification...\n");
     cycles = hal_get_time();
     crypto_sign_verify_internal(sig, siglen, message, 53, ctx, 0, pk);
     cycles = hal_get_time() - cycles;
@@ -260,7 +257,6 @@ static void run_speed(void)
     hal_send_str(cycles_str);
 
     // poly_ntt benchmark
-    hal_send_str("Benchmarking poly_ntt...\n");
     cycles = hal_get_time();
     poly_ntt(&p);
     cycles = hal_get_time() - cycles;
@@ -339,15 +335,15 @@ int main(void)
         return -1;
     }
 
-    // Third test: positive verification test vector
-    test_result = test_verify_positive();
+    // Third test: valid signature verification test vector
+    test_result = test_valid_signature_verification();
     if(test_result != 0) {
         hal_send_str("\n*** TEST FAILED ***\n");
         return -1;
     }
 
-    // Fourth test: negative verification test vector
-    test_result = test_verify_negative();
+    // Fourth test: invalid signature verification test vector
+    test_result = test_invalid_signature_verification();
     if(test_result != 0) {
         hal_send_str("\n*** TEST FAILED ***\n");
         return -1;
