@@ -4,7 +4,7 @@
 #include <limits.h>
 #include "api.h"
 #include "hal.h"
-#include "../common/randombytes.h"
+#include "randombytes.h"
 #include "poly.h"
 
 #include "testvectors.inc"

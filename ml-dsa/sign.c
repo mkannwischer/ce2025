@@ -4,7 +4,7 @@
 #include "packing.h"
 #include "polyvec.h"
 #include "poly.h"
-#include "../common/randombytes.h"
+#include "randombytes.h"
 #include "symmetric.h"
 #include "fips202.h"
 

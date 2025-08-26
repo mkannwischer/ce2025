@@ -6,7 +6,7 @@
 #include "indcpa.h"
 #include "verify.h"
 #include "symmetric.h"
-#include "../common/randombytes.h"
+#include "randombytes.h"
 /*************************************************
 * Name:        crypto_kem_keypair_derand
 *

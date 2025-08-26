@@ -3,7 +3,7 @@
 #include <string.h>
 #include <limits.h>
 #include "hal.h"
-#include "../common/randombytes.h"
+#include "randombytes.h"
 #include "sign.h"
 #include "params.h"
 #include "polyvec.h"
