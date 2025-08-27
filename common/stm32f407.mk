@@ -58,4 +58,4 @@ elf/stm32f407.elf: $(PROJECT_OBJS) obj/hal-stm32f4.c.o $(OPENCM3_DIR)/lib/lib$(L
 # Flash target for STM32F407 board using st-flash (requires st-link tools)
 flash-stm32: bin/stm32f407.bin
 	@echo "Flashing STM32F407 board..."
-	st-flash write bin/stm32f407.bin 0x8000000
+	st-flash --reset write bin/stm32f407.bin 0x8000000

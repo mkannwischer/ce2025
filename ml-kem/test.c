@@ -174,7 +174,7 @@ static void run_speed(void)
     (void)cycles;
     sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
 #else
-    sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+    sprintf(cycles_str, "%llu\n", cycles);
 #endif
     hal_send_str(cycles_str);
 
@@ -187,7 +187,7 @@ static void run_speed(void)
     (void)cycles;
     sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
 #else
-    sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+    sprintf(cycles_str, "%llu\n", cycles);
 #endif
     hal_send_str(cycles_str);
 
@@ -200,7 +200,7 @@ static void run_speed(void)
     (void)cycles;
     sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
 #else
-    sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+    sprintf(cycles_str, "%llu\n", cycles);
 #endif
     hal_send_str(cycles_str);
 
@@ -213,7 +213,7 @@ static void run_speed(void)
     (void)cycles;
     sprintf(cycles_str, "[cycle counts not meaningful in qemu emulation]\n");
 #else
-    sprintf(cycles_str, "%llu\n", (unsigned long long)cycles);
+    sprintf(cycles_str, "%llu\n", cycles);
 #endif
     hal_send_str(cycles_str);
 

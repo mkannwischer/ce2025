@@ -114,10 +114,8 @@ uint64_t hal_get_time()
   }
 }
 
-size_t hal_get_stack_size(void) {
-    // STM32F407 has 192KB RAM, we leave space for heap
-    return 32768;  // 32KB stack space
-}
+
+
 
 // Stack measurement implementation
 extern char _end[];
@@ -150,6 +148,13 @@ size_t hal_checkstack(void) {
                  ".LE%=:\n"
                  : "+r"(result) : "r" (last_sp), "r" (heap_end), "r" (stackpattern) : "ip", "cc");
     return result;
+}
+
+size_t hal_get_stack_size(void)
+{
+  register char* cur_stack;
+	asm volatile ("mov %0, sp" : "=r" (cur_stack));
+  return cur_stack - heap_end;
 }
 
 void* __wrap__sbrk(int incr) {
