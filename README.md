@@ -1,6 +1,6 @@
 # NTU Cryptographic Engineering 2025 - Final Projects
 
-This repository contains implementations of various cryptographic algorithms targeting Arm Cortex-M4 microcontrollers. Code can be tested using QEMU emulation or deployed on a STM32F407 development board for performance benchmarking.
+This repository contains implementations of various cryptographic algorithms cross-compiled for an Arm Cortex-M4 microcontrollers. Code can be tested using QEMU emulation or deployed on a STM32F407 development board for performance benchmarking.
 
 ## Projects
 
@@ -26,6 +26,9 @@ For more details on the final project (required tasks, hints, and grading detail
 ## Quick Start
 
 ### Prerequisites
+
+Linux (recommended: Ubuntu) or MacOS is required to complete this project.
+If you are using Windows, we highly recommend using an Ubuntu virtual machine, e.g., using [Virtual Box](https://www.virtualbox.org/).
 
 **Arm GCC Toolchain**:
 - **Preferred**: Download from [Arm GNU Toolchain Downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
@@ -129,12 +132,15 @@ All programs run comprehensive test suites including:
 To view output from the STM32F407 board, connect via serial terminal:
 
 ```bash
-# Connect to serial port (adjust port and baud rate as needed)
-pyserial-miniterm /dev/ttyUSB0 115200
+# Connect to serial port
+pyserial-miniterm <PORT> 115200
 
 # Common ports:
 # Linux: /dev/ttyUSB0, /dev/ttyACM0
+pyserial-miniterm /dev/ttyUSB0 115200
+
 # macOS: /dev/tty.usbserial-*, /dev/tty.usbmodem*
+pyserial-miniterm /dev/tty.usbserial-110 115200
 ```
 
 ## Development
