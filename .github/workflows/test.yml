@@ -7,12 +7,15 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  test-qemu:
     runs-on: ubuntu-latest
+    name: Test QEMU
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        submodules: true
       
     - name: Install QEMU
       run: |
@@ -27,3 +30,34 @@ jobs:
     - name: Run tests
       run: ./run-all-tests.sh
       timeout-minutes: 5
+
+  test-stm32-build:
+    runs-on: ubuntu-latest
+    name: Test STM32 Build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        
+    - name: Install ARM Toolchain
+      uses: carlosperate/arm-none-eabi-gcc-action@v1.10.0
+      with:
+        release: '14.2.Rel1'
+
+    - name: Build all projects for STM32
+      run: |
+        echo "Building SHAKE256 for STM32..."
+        make -C shake256 PLATFORM=stm32
+        
+        echo "Building ML-KEM for STM32..."
+        make -C ml-kem PLATFORM=stm32
+        
+        echo "Building ML-DSA for STM32..."
+        make -C ml-dsa PLATFORM=stm32
+        
+        echo "Building ECDH25519 for STM32..."
+        make -C ecdh25519 PLATFORM=stm32
+        
+        echo "All STM32 builds completed successfully!"
