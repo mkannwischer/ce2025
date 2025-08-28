@@ -47,6 +47,14 @@ If you are using Windows, we highly recommend using an Ubuntu virtual machine, e
 - Ubuntu/Debian: `sudo apt install python3-serial`
 - Cross-platform: `pip install pyserial`
 
+### Cloning
+
+Clone the starter package with its submodules
+```
+git clone --recursive https://github.com/mkannwischer/ce2025
+cd ce2025
+```
+
 ### Building and Running
 
 Navigate to any project directory and use these commands:
