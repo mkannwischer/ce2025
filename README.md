@@ -33,7 +33,7 @@ If you are using Windows, we highly recommend using an Ubuntu virtual machine, e
 **Arm GCC Toolchain**:
 - **Preferred**: Download from [Arm GNU Toolchain Downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
 - Ubuntu/Debian: `sudo apt install gcc-arm-none-eabi`
-- macOS: `brew install arm-none-eabi-gcc`
+- macOS: `brew install gcc-arm-embedded`
 
 **QEMU with Arm support**:
 - Ubuntu/Debian: `sudo apt install qemu-system-arm`
