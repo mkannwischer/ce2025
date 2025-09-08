@@ -135,6 +135,14 @@ All programs run comprehensive test suites including:
 
 ## Hardware Setup
 
+### Connecting the STM32F407 discovery board
+- Connect the Mini-USB cable to the top of development board -- used for power supply and for flashing software
+- Connect the RX cable (white) of your USART dongle to the PA2 pin (USART2, TX) -- used for serial communication
+
+It should look like this:
+![stm32f407](https://github.com/user-attachments/assets/5b7fc200-52f9-4c85-b6c2-f61f09cf8979)
+
+
 ### STM32F407 Serial Output
 
 To view output from the STM32F407 board, connect via serial terminal:
